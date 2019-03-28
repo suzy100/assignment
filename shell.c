@@ -29,8 +29,10 @@ main(int argc, char** argv)
         while (feof(fp) == 0)
         {
             fgets(buf, MAX_LINE, fp);
-            buf[strlen(buf)-1] = '\0';
+            if(buf[strlen(buf)-1] == '\n')
+                buf[strlen(buf)-1] = '\0';
             printf("%s\n", buf);
+            if(strcmp(buf, "quit") == 0) return 0;
         
             my_shell(buf);
         }
@@ -50,7 +52,9 @@ main(int argc, char** argv)
             fgets(buf, MAX_LINE, stdin);
             buf[strlen(buf)-1] = '\0';
             if(strcmp(buf, "quit") == 0) return 0;
-	
+	        if(feof(stdin)){
+                break;
+            }
  	    my_shell(buf);
     	}
     }
@@ -75,8 +79,7 @@ my_shell(char *buf)
         
     // slice each command by ';'
     char *p = strtok(buf, ";");
-        
-    // if command is only one
+    
     if (p == NULL)
     {
         printf("Error : wrong command.\n");
@@ -116,7 +119,7 @@ my_shell(char *buf)
         // exec!
         if(execvp(arg[0], arg) == -1)
         {
-            printf("Error : exec failed.\n");
+            printf("Error : exec failed. Maybe wrong command...\n");
             exit(0);
         }
     }
