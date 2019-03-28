@@ -9,75 +9,128 @@
 
 #define MAX_LINE 1024
 
+int my_shell(char* buf);
+
 int
-main(void)
+main(int argc, char** argv)
 {
-    char *buf[MAX_LINE];
-    char *arg[MAX_LINE];
-    int proc_stat;
-    char *p;
-    char *input[MAX_LINE];
+    char buf[MAX_LINE];
 
-
-    printf("prompt> ");
-
-    while(1)
-    {   
-        int n_Fork = 0;
-        int r_Process = 0;
-        memset(buf, 0x00, MAX_LINE);
-        memset(input, 0x00, MAX_LINE);
-        memset(arg, 0x00, MAX_LINE);
-
-        fgets(*buf, MAX_LINE-1, stdin);
-        if(strcmp(*buf, "quit") == 0) break;
-        
-        buf[strlen(*buf)-1] = 0;
-        
-        p = strtok(*buf, ";");
-        input[n_Fork] = p;
-
-        while (p != NULL)
+    // batch mode
+    if (argc == 2)
+    {
+        FILE* fp = fopen(argv[1], "rt");
+        if (fp == NULL)
         {
-            n_Fork++;
-            p = strtok(NULL, ";");
-            input[n_Fork] = p;
+            printf("Error : Can't open the file.\n");
+            return 1;
         }
 
-        pid_t pid[n_Fork];
-
-
-        while(r_Process < n_Fork)
+        while (feof(fp) == 0)
         {
-            p = strtok(input[r_Process], " ");
-            p[strlen(p)-1] = '\0';
-            arg[0] = p;
-            int i = 0;
-            while(p != NULL)
-            {
-                i++;
-                arg[i] = input[r_Process];
-            }
-
-            pid[r_Process] = fork();
-
-            if(pid[r_Process] == 0)
-            {
-                if(execvp(arg[0], arg) == -1)
-                {
-                    printf("Failed to exec.\n");
-                    exit(0);
-                }
-            }
-
-            if(pid[r_Process] > 0)
-            {
-                wait(&proc_stat);
-            }
-
-            r_Process++;
+            fgets(buf, MAX_LINE, fp);
+            buf[strlen(buf)-1] = '\0';
+            printf("%s\n", buf);
+        
+            my_shell(buf);
         }
+
+        fclose(fp);
+    }
+    
+ 
+    // interactive mode
+    else if (argc == 1)
+    {
+    	while(1)
+    	{           
+            printf("prompt> ");
+
+            // get input
+            fgets(buf, MAX_LINE, stdin);
+            buf[strlen(buf)-1] = '\0';
+            if(strcmp(buf, "quit") == 0) return 0;
+	
+ 	    my_shell(buf);
+    	}
+    }
+
+    else
+    {
+        printf("Error : Input is wrong.\n");
+        return 1;
     }
     return 0;
 }
 
+int
+my_shell(char *buf)
+{
+	int n_Fork = 0;
+	pid_t pid;
+	pid_t pids[MAX_LINE];
+	
+    // quit
+    if(strcmp(buf, "quit") == 0) return 0;
+        
+    // slice each command by ';'
+    char *p = strtok(buf, ";");
+        
+    // if command is only one
+    if (p == NULL)
+    {
+        printf("Error : wrong command.\n");
+        return 1;
+    }
+        
+    // command's'
+    else
+    {   
+        // slice more
+        while (p != NULL)
+        {
+            // fork here
+            pids[n_Fork] = pid = fork();
+            if (pid == 0) break;
+            n_Fork++;
+            p = strtok(NULL, ";");
+        }
+    }
+
+    // child process
+    if (pid == 0)
+    {
+        // parsing commands
+        char *p2 = strtok(p, " ");
+        char *arg[MAX_LINE];
+        arg[0] = p2;
+
+        int i = 0;
+        while(p2 != NULL)
+        {
+            i++;
+            p2 = strtok(NULL, " ");
+            arg[i] = p2;
+        }
+            
+        // exec!
+        if(execvp(arg[0], arg) == -1)
+        {
+            printf("Error : exec failed.\n");
+            exit(0);
+        }
+    }
+
+    // parent process
+    else if(pid > 0)
+    {
+        int proc_stat;
+        // wait for all children
+        for(int i=0; i<n_Fork; i++)
+        {
+            waitpid(pids[i], &proc_stat, 0);
+        }
+    }
+
+    return 0;
+}
