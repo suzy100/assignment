@@ -50,11 +50,9 @@ int main()
 
 	else {
 		printf("Cannot find data.\n");
-        return -1;
 	}
 
 	if ((pFile = fopen("2017029752_백승수.csv", "w")) != NULL) {
-		printf("success\n");
 		for (int i = 0; i < cnt; i++) {
 			char buffer[70];
             memset(buffer, '\0', sizeof(char)*70);
@@ -142,21 +140,19 @@ void search(Person *person) {
 	char input[50];
 	scanf("%s", input);
 
-	int r_index = 0;
 	int c = 0;
 	
 	int len = strlen(input);
 	for (int i = 1; i < cnt; i++) {
 		if (strncmp(person[i].name, input, len) == 0) {
 			printf("name: %s // phone: %s\n", person[i].name, person[i].p_number);
-			ii[r_index] = i;
-			r_index++;
 			c++;
 		}
 	}
 
+    printf("%d results.\n", c);
+
 	if (c == 0) {
-		printf("No result.\n");
 		return;
 	}
 
@@ -165,6 +161,7 @@ void search(Person *person) {
 
 void insert(Person *person) {
     char buffer[15];
+    char buf[15];
     int flag;
 	printf("<Insert Mode>\n");
 	printf("name: ");
@@ -174,7 +171,13 @@ void insert(Person *person) {
     do {
         flag = 0;
 	    printf("phone number: ");
-	    scanf("%[0-9]", buffer);
+        scanf("%s", buf);
+        if (!(strlen(buf) == 11)) {
+            flag = 1;
+            printf("Phone number should be 010xxxxxxxx (x is number)\n");
+            continue;
+        }
+	    sscanf(buf, "%[0-9]", buffer);
         while (getchar() != '\n');
         if (!(strlen(buffer) == 11 && buffer[0] == '0' && buffer[1] == '1' && buffer[2] == '0')) {
             flag = 1;
@@ -204,9 +207,10 @@ void modify(Person *person) {
 			c++;
 		}
 	}
+    
+    printf("%d results.\n", c);
 
 	if (c == 0) {
-		printf("No result.\n");
 		return;
 	}
     int com, flag;
@@ -243,6 +247,7 @@ void modify(Person *person) {
             }
         } while (flag);
         
+        char buf[15];
         char buffer[15];
         int flag;
 
@@ -257,7 +262,13 @@ void modify(Person *person) {
 			do {
         			flag = 0;
 	    			printf("phone number: ");
-	    			scanf("%s", buffer);
+	    			scanf("%s", buf);
+                    if (!(strlen(buf) == 11)) {
+                        flag = 1;
+                        printf("Phone number should be 010xxxxxxxx (x is number)\n");
+                        continue;
+                    }
+                    sscanf(buf, "%[0-9]", buffer);
                     while (getchar() != '\n');
         			if (!(strlen(buffer) == 11 && buffer[0] == '0' && buffer[1] == '1' && buffer[2] == '0')) {
 					    flag = 1;
@@ -293,8 +304,9 @@ void delete(Person *person) {
 		}
 	}
 
+    printf("%d results.\n", c);
+
 	if (c == 0) {
-		printf("No result.\n");
 		return;
 	}
     int com, flag;
