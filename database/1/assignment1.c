@@ -3,7 +3,7 @@
 
 typedef struct Person
 {
-	char	name[30];
+	char	name[50];
 	char	p_number[15];
 }Person;
 
@@ -24,17 +24,12 @@ Person person[500001];
 int main()
 {
 	if ( (pFile = fopen("2017029752_백승수.csv", "r")) != NULL ) {
-		printf("111111\n");
 		while (!feof(pFile)) {
 			pStr = fgets(strTmp, sizeof(strTmp), pFile);
 
-			if (colCnt >= 1) {
-				if (pStr == NULL) break;
-				sscanf(pStr, "%[^','],%s", &person[cnt].name, &person[cnt].p_number);
-				cnt++;
-			}
-
-			else colCnt++;
+			if (pStr == NULL) break;
+			sscanf(pStr, "%[^','],%s", person[cnt].name, person[cnt].p_number);
+			cnt++;
 		}
 
 		fclose(pFile);
@@ -42,38 +37,27 @@ int main()
 	}
 
 	else if ( (pFile = fopen("contact.csv", "r")) != NULL ) {
-		printf("22222\n");
 		while (!feof(pFile)) {
 			pStr = fgets(strTmp, sizeof(strTmp), pFile);
 
-			if (colCnt >= 1) {
-				if (pStr == NULL) break;
-				sscanf(pStr, "%[^','],%s", &person[cnt].name, &person[cnt].p_number);
-				cnt++;
-			}
-
-			else colCnt++;
+			if (pStr == NULL) break;
+			sscanf(pStr, "%[^','],%s", person[cnt].name, person[cnt].p_number);
+			cnt++;
 		}
 
 		fclose(pFile);
-
-		printf("%s, %s\n", person[0].name, person[0].p_number);
 	}
 
 	else {
 		printf("Cannot find data.\n");
+        return -1;
 	}
-	// if (pFile != NULL) {
-	// 	while (!feof(pFile)) {
-
-	// 	}
-	// }
 
 	if ((pFile = fopen("2017029752_백승수.csv", "w")) != NULL) {
 		printf("success\n");
 		for (int i = 0; i < cnt; i++) {
-			char buffer[50];
-            memset(buffer, '\0', sizeof(char)*50);
+			char buffer[70];
+            memset(buffer, '\0', sizeof(char)*70);
 			sprintf(buffer, "%s,%s\n", person[i].name, person[i].p_number);
 			int len = strlen(buffer);
 			fwrite(buffer, (sizeof(char)) * len, 1, pFile);
@@ -85,15 +69,24 @@ int main()
 		return -1;
 	}
 
-	while (1) {
-		printf("Choose number what you want to do.\n");
-		printf("0. Exit\n");
-		printf("1. Search\n");
-		printf("2. Insert\n");
-		printf("3. Modify\n");
-		printf("4. Delete\n");
+    int flag, com;
 
-		scanf("%d", &command); 
+	while (1) {
+        do {
+            flag = 0;
+		    printf("Choose number what you want to do.\n");
+		    printf("0. Exit\n");
+		    printf("1. Search\n");
+		    printf("2. Insert\n");
+		    printf("3. Modify\n");
+		    printf("4. Delete\n");
+
+		    if (!scanf("%d", &command)) {
+                printf("Wrong command.\nPlease insert number 0~4.\n");
+                flag = 1;
+                while(com=getchar() != '\n' && com != EOF);
+            }
+        } while (flag);
 
 		switch (command) {
 			case 0:
@@ -119,19 +112,15 @@ int main()
 				break;
 			
 			default:
-				printf("Sorry. Maybe wrong command.\nPlease insert number 0~4.\n");
+				printf("Wrong command. Please insert number 0~4.\n");
 				break;
 		}
 
-		//pFile = fopen("2017029752_.csv", "w");
-		//fclose(pFile);
-
 		if (command == 2 || command == 3 || command == 4) {
 			if ((pFile = fopen("2017029752_백승수.csv", "w")) != NULL) {
-				printf("success\n");
 				for (int i = 0; i < cnt; i++) {
-					char buffer[50];
-                    memset(buffer, '\0', sizeof(char)*50);
+					char buffer[70];
+                    memset(buffer, '\0', sizeof(char)*70);
 					sprintf(buffer, "%s,%s\n", person[i].name, person[i].p_number);
 					int len = strlen(buffer);
 					fwrite(buffer, (sizeof(char)) * len, 1, pFile);
@@ -150,14 +139,14 @@ int main()
 void search(Person *person) {
 	printf("Searching: ");
 	
-	char input[30];
+	char input[50];
 	scanf("%s", input);
 
 	int r_index = 0;
 	int c = 0;
 	
 	int len = strlen(input);
-	for (int i = 0; i < cnt; i++) {
+	for (int i = 1; i < cnt; i++) {
 		if (strncmp(person[i].name, input, len) == 0) {
 			printf("name: %s // phone: %s\n", person[i].name, person[i].p_number);
 			ii[r_index] = i;
@@ -171,74 +160,43 @@ void search(Person *person) {
 		return;
 	}
 
-	/*
-	printf("Do you want to Modify or Delete?\n");
-	printf("1. Modify\n");
-	printf("2. Delete\n");
-	printf("3. No thanks (Back to main menu)\n");
-	scanf("%d", &command);
-
-	switch (command) {
-		int index;
-		case 1:
-			while (1) {
-				printf("Modify what? Choose index.\n");
-				scanf("%d", &index);
-				if (index < 0 || index >= c) {
-					printf("Invalid index.\n");
-				}
-				else break;
-			}
-			modify(person, ii[index]);
-			printf("Modified.\n");
-			break;
-
-		case 2:
-			while (1) {
-				printf("Delete what? Choose index.\n");
-				scanf("%d", &index);
-				if (index < 0 || index >= c) {
-					printf("Invalid index.\n");
-				}
-				else break;
-			}
-			delete(person, ii[index]);
-			printf("Deleted.\n");
-			break;
-
-		case 3:
-			return;
-
-		default:
-			printf("Wrong command. Back to main menu.\n");
-			break;
-	}
-
-	*/
-
 	return;
 }
 
 void insert(Person *person) {
+    char buffer[15];
+    int flag;
 	printf("<Insert Mode>\n");
 	printf("name: ");
-	scanf("%s", &person[cnt].name);
-	printf("phone number: ");
-	scanf("%s", &person[cnt].p_number);
+	scanf("%s", person[cnt].name);
+    while (getchar() != '\n');
+    
+    do {
+        flag = 0;
+	    printf("phone number: ");
+	    scanf("%[0-9]", buffer);
+        while (getchar() != '\n');
+        if (!(strlen(buffer) == 11 && buffer[0] == '0' && buffer[1] == '1' && buffer[2] == '0')) {
+            flag = 1;
+            printf("Phone number should be 010xxxxxxxx (x is number)\n");
+        }
+    } while (flag);
+
+    strcpy(person[cnt].p_number, buffer);
 	cnt++;
 	return;
 }
 
 void modify(Person *person) {
-	printf("Modify what? Give me the name: ");
+	printf("Modify what? Give me the exact name: ");
 
-	char input[30];
+	char input[50];
 	scanf("%s", input);
 
 	int r_index = 0;
 	int c = 0;
 
-	for (int i = 0; i < cnt; i++) {
+	for (int i = 1; i < cnt; i++) {
 		if (strcmp(person[i].name, input) == 0) {
 			printf("[%d] name: %s // phone: %s\n", r_index, person[i].name, person[i].p_number);
 			ii[r_index] = i;
@@ -251,11 +209,19 @@ void modify(Person *person) {
 		printf("No result.\n");
 		return;
 	}
-
+    int com, flag;
 	int index;
 	while (1) {
-		printf("Modify what? Choose index.\n");
-		scanf("%d", &index);
+        do {
+            flag = 0;
+		    printf("Modify what? Choose index.\n");
+		    if (!scanf("%d", &index)) {
+                printf("Wrong command. Please insert number.\n");
+                flag = 1;
+                while (com=getchar() != '\n' && com != EOF);
+            }
+        } while (flag);
+
 		if (index < 0 || index >= c) {
 			printf("Invalid index.\n");
 		}
@@ -263,19 +229,46 @@ void modify(Person *person) {
 	}
 	index = ii[index];
 	printf("<Modify Mode>\n");
-	printf("Modify (1)name or (2)phone number?\n");
 	int ans;
 	while (1) {
-		scanf("%d",&ans);
+        do {
+            flag = 0;
+            
+            printf("Modify (1)name or (2)phone number?\n");
+            
+            if (!scanf("%d",&ans)) {
+                printf("Wrong command. Choose 1 or 2\n");
+                flag = 1;
+                while (com=getchar() != '\n' && com != EOF);
+            }
+        } while (flag);
+        
+        char buffer[15];
+        int flag;
+
 		switch (ans) {
+
 		case 1:
 			printf("name: ");
-			scanf("%s", &person[index].name);
+			scanf("%s", person[index].name);
 			return;
+
 		case 2:
-			printf("phone number: ");
-			scanf("%s", &person[index].p_number);
+			do {
+        			flag = 0;
+	    			printf("phone number: ");
+	    			scanf("%s", buffer);
+                    while (getchar() != '\n');
+        			if (!(strlen(buffer) == 11 && buffer[0] == '0' && buffer[1] == '1' && buffer[2] == '0')) {
+					    flag = 1;
+            			printf("Phone number should be 010xxxxxxxx (x is number)\n");
+        			}
+    		} while (flag);
+
+    		strcpy(person[index].p_number, buffer);
+			cnt++;
 			return;
+
 		default:
 			printf("Wrong command. Choose 1 or 2\n");
 		}
@@ -283,15 +276,15 @@ void modify(Person *person) {
 }
 
 void delete(Person *person) {
-	printf("Delete what? Give me the name: ");
+	printf("Delete what? Give me the exact name: ");
 
-	char input[30];
+	char input[50];
 	scanf("%s", input);
 
 	int r_index = 0;
 	int c = 0;
 
-	for (int i = 0; i < cnt; i++) {
+	for (int i = 1; i < cnt; i++) {
 		if (strcmp(person[i].name, input) == 0) {
 			printf("[%d] name: %s // phone: %s\n", r_index, person[i].name, person[i].p_number);
 			ii[r_index] = i;
@@ -304,11 +297,19 @@ void delete(Person *person) {
 		printf("No result.\n");
 		return;
 	}
-
+    int com, flag;
 	int index;
 	while (1) {
-		printf("Delete what? Choose index.\n");
-		scanf("%d", &index);
+        do {
+            flag = 0;
+		    printf("Delete what? Choose index.\n");
+		    if (!scanf("%d", &index)) {
+                printf("Wrong command. Please insert number.\n");
+                flag = 1;
+                while (com=getchar() != '\n' && com != EOF);
+            }
+        } while (flag);
+
 		if (index < 0 || index >= c) {
 			printf("Invalid index.\n");
 		}
