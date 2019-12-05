@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+Found for: {{name}}
+<br>
+count : {{count}}
+<br>
+Do you want to...
+<br>
+<a href = "/">메인화면</a><br/>
+<a href = "/insert">추가하기</a><br/>
+
+<form action="/modify" method="post">
+    <input type="text" name="name" placeholder="name">
+    <button type="submit">수정</button>
+</form>
+
+<form action="/delete" method="post">
+    <input type="text" name="name" placeholder="name">
+    <button type="submit">삭제</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>name</th>
+            <th>number</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for row in result %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<form action="/modify_complete" method="post" >
+    <input type="text" style="border:none;color: white;" name="before_name" value={{modify_from}}></input>
+    <table border="1" width="300" align="center">
+        <tr>
+            <td>이름</td>
+            <td><input type="text" name="name" placeholder={{modify_from}} value={{modify_from}}></input></td>
+        </tr>
+
+        <tr>
+            <td>번호</td>
+            <td><input type="text" name="num" pattern = "(010)\d{8}" title = "010xxxxxxxx 형식으로 입력해주세요"></input></td>
+        </tr>       
+
+        <tr>               
+            <td colspan="3" align="center"><button type="submit">수정</button></td>
+        </tr>
+    </table>
+</form>
+
+{% endblock %}

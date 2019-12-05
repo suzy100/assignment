@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>예제 이미지 슬라이드 입니다.</title>
+	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<style type="text/css">
+		body{
+			margin: 0;
+			padding: 0;
+		}
+		.view_area{
+			border: 1px solid blue;
+			width: 50%;
+			height: 100px;
+			overflow: hidden;
+			margin: 0 auto;
+		}
+		.view_area .img_slide{
+			/*이미지와 좌우여백 모두 더한 총 길이*/
+			width: 1800px;
+		}
+		.view_area .img_slide img{
+			float : left;
+			margin: 0px 10px;
+		}
+		.btn_box{
+			width: 500px;
+			text-align: center;
+			margin: 0 auto;
+		}
+	</style>
+	<script type="text/javascript">
+		$(document).ready(function(){
+
+            var width_editor = parseInt($('.img_slide').css('width')) - parseInt($('.view_area').css('width'));
+            var checker = 0;
+            $('.img_slide').css('margin-left',width_editor*(-1/2));
+
+            $('.left_btn').click(function(){
+                if(checker==0) 
+                {
+                    checker = 1;
+                    var temp = $('.img_slide').find('img').first().detach();
+                    $('.img_slide').find('img').last().after(temp);
+                    $('.img_slide').css('margin-left',width_editor*(-1/2));
+
+                    $('.img_slide').animate({
+                        'margin-left':'-=120'
+                        // 이미지 하나의 크기 = 여백 + 자체 길이
+                    },300,function(){
+                        checker = 0;
+                    });
+                }
+            });
+            $('img').click(function(){
+                if($(this).attr('alt')=='left')
+                {
+                    $('.left_btn').click();
+                    $(this).next().next().attr('alt','left');
+                    $(this).next().next().next().attr('alt','middle');
+                    $(this).next().next().next().next().attr('alt','right');
+                    $(this).attr('alt',' ');
+                };
+                else if($(this).attr('alt')=='right')
+                {
+                    $('.right_btn').click();
+                    $('img[alt=right]').prev().prev().attr('alt','right');
+                    $('img[alt=right]').prev().prev().prev().attr('alt','middle');
+                    $('img[alt=right]').prev().prev().prev().prev().attr('alt','left');
+                    $(this).attr('alt',' ');
+                }
+
+            });
+            $('.right_btn').click(function(){
+                if(checker==0) 
+                {
+                    checker = 1;
+                    var temp = $('.img_slide').find('img').last().detach();
+                    $('.img_slide').find('img').first().before(temp);
+                    $('.img_slide').css('margin-left',width_editor*(-1/2));
+
+                    $('.img_slide').animate({
+                        'margin-left':'+=120'
+                        // 이미지 하나의 크기 = 여백 + 자체 길이
+                    },300,function(){
+                        checker = 0;
+                    });
+                }
+            });
+        })
+	</script>
+</head>
+<body>
+	<br />
+	<br />
+	<div class="view_area">
+		<div class="img_slide">
+            <img src="http://www.placehold.it/100" 1>
+            <img src="http://www.placehold.it/100" 2>
+            <img src="http://www.placehold.it/100" 3>
+            <img src="http://www.placehold.it/100" 4>
+            <img src="http://www.placehold.it/100" 5>
+            <img src="http://www.placehold.it/100" 6>
+            <img src="http://www.placehold.it/100" 7 alt='left'>
+            <img src="http://www.placehold.it/100" 8 alt='middle'>
+            <img src="http://www.placehold.it/100" 9 alt='right'>
+            <img src="http://www.placehold.it/100" 10>
+            <img src="http://www.placehold.it/100" 11>
+            <img src="http://www.placehold.it/100" 12>
+            <img src="http://www.placehold.it/100" 13>
+            <img src="http://www.placehold.it/100" 14>
+            <img src="http://www.placehold.it/100" 15>
+        </div>
+	</div>
+	<div class="btn_box">
+		<span class="left_btn">LEFT</span>
+		<span class="right_btn">RIGHT</span>
+	</div>
+</body>
+</html>

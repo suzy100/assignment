@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<h1><div>
+    <h2><div>ADDRESS BOOK</div></h2>
+    <hr>
+    <div style="width: 100%;background-color: white;color: black;height: 500px;font-weight: bold;text-align: center;">
+        {{deleted}}
+        <form action="/insert" method="get">
+            <button type="submit" style="width:40px;height:40px;font-size: 30px"><strong>+</strong></button>
+        </form>
+        <form action="/search" method="post">
+            <input type="text" name="name" size="50" placeholder="name" style="margin:0px;padding:10px;">
+            <button type="submit" style="width:70px;height:40px;background-color:#084B8A;font-weight:bold;color:#D8D8D8;">검색</button>
+        </form>
+    </div>
+    <hr>
+    <div style="width: 100%;height: 40px;font-family: 휴먼편지체;font-size: 20px;">®백승수</div>
+</div></h1>
+
+{% endblock %}

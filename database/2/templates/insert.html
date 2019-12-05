@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<form action="/insert_complete" method="post" >
+    <table border="1" width="300" align="center">
+        <tr>
+            <td>이름</td>
+            <td><input type="text" name="name"></input></td>
+        </tr>
+
+        <tr>
+            <td>번호</td>
+            <td><input type="text" name="num" pattern = "(010)\d{8}" title = "010xxxxxxxx 형식으로 입력해주세요"></input></td>
+        </tr>       
+
+        <tr>               
+            <td colspan="3" align="center"><button type="submit">추가</button></td>
+        </tr>
+    </table>
+</form>
+
+{% endblock %}
